@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>林さんの☆Happyガチャ</title>
+    <style>
+        :root {
+            --primary-pink: #ffafbd;
+            --secondary-pink: #ffc3a0;
+            --rarity-r: #a1c4fd;
+            --rarity-sr: #f9d423;
+            --rarity-ssr: #ff0080;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fff5f8 0%, #e0f2fe 100%);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* メインコンテナ */
+        .game-container {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            height: 600px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            padding: 20px;
+            border: 8px solid #fff;
+        }
+
+        h1 {
+            color: #ff7eb3;
+            font-size: 24px;
+            text-shadow: 2px 2px 0px #fff;
+        }
+
+        /* ガチャ台の見た目 */
+        .gacha-machine {
+            width: 200px;
+            height: 250px;
+            background: var(--primary-pink);
+            border-radius: 50% 50% 20% 20%;
+            position: relative;
+            border: 5px solid #ff85a1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .gacha-inside {
+            width: 150px;
+            height: 150px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            display: flex;
+            flex-wrap: wrap;
+            padding: 10px;
+            justify-content: center;
+        }
+
+        .capsule-deco {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin: 2px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* ボタン */
+        .draw-btn {
+            background: linear-gradient(to bottom, #ff9a9e, #fecfef);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #e68a8e;
+            transition: 0.1s;
+        }
+
+        .draw-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #e68a8e;
+        }
+
+        /* 演出オーバーレイ */
+        #overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            border-radius: 25px;
+            z-index: 10;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* キャラクターカード */
+        .card {
+            width: 250px;
+            height: 350px;
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 10px solid gold;
+            position: relative;
+        }
+
+        .card-img { font-size: 80px; margin-bottom: 20px; }
+        .card-rarity { font-weight: bold; font-size: 24px; margin-bottom: 10px; }
+        .card-name { font-size: 20px; font-weight: bold; color: #333; }
+
+        .close-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: none;
+            background: #eee;
+            cursor: pointer;
+        }
+
+        /* キラキラ演出 */
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            animation: move 1s linear forwards;
+        }
+        @keyframes move { to { transform: translate(var(--x), var(--y)); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <h1>林さんの☆Happyガチャ</h1>
+    
+    <div class="gacha-machine">
+        <div class="gacha-inside" id="machine-inside">
+            </div>
+    </div>
+
+    <button class="draw-btn" onclick="drawGacha()">1回まわす！</button>
+
+    <div id="overlay">
+        <div id="result-container"></div>
+        <button class="close-btn" onclick="closeResult()">閉じる</button>
+    </div>
+</div>
+
+<script>
+    // キャラクターデータ
+    const characters = [
+        { name: "ノーマルな林さん", emoji: "🌲", rarity: "R", color: "#a1c4fd" },
+        { name: "お菓子好きの林さん", emoji: "🍰", rarity: "SR", color: "#f9d423" },
+        { name: "おやすみ林さん", emoji: "💤", rarity: "SR", color: "#f9d423" },
+        { name: "伝説の妖精・林", emoji: "🧚‍♀️", rarity: "SSR", color: "#ff0080" },
+        { name: "輝く林様", emoji: "✨", rarity: "SSR", color: "#ff0080" }
+    ];
+
+    // ガチャの中身を装飾
+    const inside = document.getElementById('machine-inside');
+    for(let i=0; i<12; i++){
+        const div = document.createElement('div');
+        div.className = 'capsule-deco';
+        div.style.backgroundColor = `hsl(${Math.random()*360}, 70%, 80%)`;
+        div.style.animationDelay = `${Math.random()}s`;
+        inside.appendChild(div);
+    }
+
+    function drawGacha() {
+        const overlay = document.getElementById('overlay');
+        const container = document.getElementById('result-container');
+        
+        // 抽選ロジック
+        const rand = Math.random() * 100;
+        let result;
+        if (rand < 5) result = characters[Math.floor(Math.random() * 2) + 3]; // SSR 5%
+        else if (rand < 30) result = characters[Math.floor(Math.random() * 2) + 1]; // SR 25%
+        else result = characters[0]; // R 70%
+
+        // 結果の表示
+        container.innerHTML = `
+            <div class="card" style="border-color: ${result.color}">
+                <div class="card-rarity" style="color: ${result.color}">${result.rarity}</div>
+                <div class="card-img">${result.emoji}</div>
+                <div class="card-name">${result.name}</div>
+            </div>
+        `;
+
+        overlay.style.display = 'flex';
+        if(result.rarity === 'SSR') createSparkles();
+    }
+
+    function closeResult() {
+        document.getElementById('overlay').style.display = 'none';
+    }
+
+    // SSRの時のキラキラ演出
+    function createSparkles() {
+        for(let i=0; i<50; i++) {
+            const s = document.createElement('div');
+            s.className = 'sparkle';
+            s.innerHTML = '✨';
+            s.style.left = '50%';
+            s.style.top = '50%';
+            s.style.setProperty('--x', `${(Math.random()-0.5)*300}px`);
+            s.style.setProperty('--y', `${(Math.random()-0.5)*500}px`);
+            document.body.appendChild(s);
+            setTimeout(() => s.remove(), 1000);
+        }
+    }
+</script>
+
+</body>
+</html>
