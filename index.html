@@ -1,1 +1,122 @@
-林　
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAYASHI's Profile</title>
+    <style>
+        /* 全体の設定：ふわふわした雰囲気 */
+        body {
+            background-color: #fff5f8; /* 薄いピンク */
+            color: #5d5d5d;
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* カードの設定 */
+        .profile-card {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(255, 182, 193, 0.3);
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+            border: 4px solid #ffdae9;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* アイコン（仮のキラキラ丸） */
+        .icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 154, 158, 0.4);
+        }
+
+        /* お名前 */
+        h1 {
+            font-size: 24px;
+            margin: 10px 0;
+            color: #ff7eb3;
+        }
+
+        .name-yomi {
+            font-size: 14px;
+            color: #ffb6c1;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        /* 自己紹介文 */
+        p {
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        /* 好きなものタグ */
+        .tags {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .tag {
+            background-color: #fff0f5;
+            color: #ff69b4;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            border: 1px solid #ffdae9;
+        }
+
+        /* 装飾 */
+        .deco {
+            color: #ffb6c1;
+            font-size: 20px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="profile-card">
+        <div class="icon">🐾</div>
+        <h1>林</h1>
+        <span class="name-yomi">HAYASHI</span>
+        
+        <div class="deco">✧˖°</div>
+        
+        <p>
+            はじめまして！林です。<br>
+            のんびり楽しく過ごすのが好きです。<br>
+            よろしくお願いします♪
+        </p>
+
+        <div class="tags">
+            <span class="tag">お菓子作り</span>
+            <span class="tag">お散歩</span>
+            <span class="tag">カフェ巡り</span>
+        </div>
+    </div>
+
+</body>
+</html>
